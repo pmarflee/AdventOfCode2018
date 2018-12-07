@@ -13,6 +13,7 @@ let main _ =
     let run title input func = printfn "%s %O" title (func input)
 
     run "Day 1 Part 1:" (readAllLines "Day1.txt") (Day1.calculatePart1)
+    run "Day 1 Part 2:" (readAllLines "Day1.txt") (Day1.calculatePart2)
 
     printfn ""
     printfn "Finished"
