@@ -9,7 +9,7 @@ module Day2 =
                          |> Seq.groupBy id
                          |> Seq.map (fun (_, s) -> Seq.length s)
                          |> Seq.toList
-            let hasCountOf v = counts |> List.exists (fun c -> c = v) 
+            let hasCountOf v = counts |> List.exists ((=) v)
             (hasCountOf 2, hasCountOf 3)
 
         let (count2, count3) = lines 
