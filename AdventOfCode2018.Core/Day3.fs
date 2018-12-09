@@ -25,7 +25,7 @@ module Day3 =
           Width = int m.Groups.[4].Value;
           Height = int m.Groups.[5].Value }
 
-    let calculate part (lines : seq<string>) = 
+    let calculate part lines = 
         let create (map, claims) line =
             let claim = parse line
             let addAreas map' area = 
@@ -34,7 +34,7 @@ module Day3 =
                              | None -> Set.singleton claim.Number
                 Map.add area claims map'
             (claim.Areas |> Seq.fold addAreas map, claim :: claims)
-        let (areas, claims) = lines |> Seq.fold create (Map.empty<(int * int), Set<int>>, [])
+        let (areas, claims) = lines |> Seq.fold create (Map.empty, [])
         let areasList = Map.toList areas
         let hasNoOverlappingAreas claim = 
             areasList 
@@ -44,5 +44,5 @@ module Day3 =
         | 1 -> areasList 
                 |> List.filter (fun (_, claims) -> claims.Count > 1) 
                 |> List.length
-        | 2 -> (claims |> List.find hasNoOverlappingAreas).Number
+        | 2 -> (List.find hasNoOverlappingAreas claims).Number
         | _ -> raise <| new ArgumentOutOfRangeException("part")
