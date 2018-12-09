@@ -16,7 +16,8 @@ let main _ =
     run "Day 1 Part 2:" (readAllLines "Day1.txt") (Day1.calculatePart2)
     run "Day 2 Part 1:" (readAllLines "Day2.txt") (Day2.calculatePart1)
     run "Day 2 Part 2:" (readAllLines "Day2.txt") (Day2.calculatePart2)
-    run "Day 3 Part 1:" (readAllLines "Day3.txt") (Day3.calculatePart1)
+    run "Day 3 Part 1:" (readAllLines "Day3.txt") (Day3.calculate 1)
+    run "Day 3 Part 2:" (readAllLines "Day3.txt") (Day3.calculate 2)
 
     printfn ""
     printfn "Finished"

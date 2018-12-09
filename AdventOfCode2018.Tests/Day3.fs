@@ -28,11 +28,12 @@
                                     Width = 2;
                                     Height = 2 } |] ]
 
-            static member Part1Data 
+            static member PartData 
                 with get() = [ [| [ "#1 @ 1,3: 4x4"; 
                                     "#2 @ 3,1: 4x4"; 
                                     "#3 @ 5,5: 2x2" ] :> obj;
-                                    4 :> obj |] ]
+                                    4 :> obj;
+                                    3 :> obj |] ]
 
             [<Theory>]
             [<MemberData("ParserData")>]
@@ -40,7 +41,12 @@
                 parse input |> should equal expected
 
             [<Theory>]
-            [<MemberData("Part1Data")>]
-            member _verify.``Calculate how many square inches of fabric are within 2 or more claims`` (input : seq<string>, expected : int) =
-                calculatePart1 input |> should equal expected
+            [<MemberData("PartData")>]
+            member _verify.``Calculate how many square inches of fabric are within 2 or more claims`` (input : seq<string>, expected : int, _) =
+                calculate 1 input |> should equal expected
+
+            [<Theory>]
+            [<MemberData("PartData")>]
+            member _verify.``Get ID of claim that doesn't overlap`` (input : seq<string>, _, expected : int) =
+                calculate 2 input |> should equal expected
 

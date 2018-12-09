@@ -9,6 +9,11 @@ module Day3 =
                    TopOffset : int;
                    Width : int;
                    Height : int }
+                   member this.Areas = seq {
+                       for col = this.LeftOffset to this.LeftOffset + this.Width - 1 do
+                           for row = this.TopOffset to this.TopOffset + this.Height - 1 do
+                               yield (col, row)
+                   }
 
     let private _regex = new Regex("^#([0-9]+)\s@\s([0-9]+),([0-9]+):\s([0-9]+)x([0-9]+)$")
 
@@ -20,22 +25,24 @@ module Day3 =
           Width = int m.Groups.[4].Value;
           Height = int m.Groups.[5].Value }
 
-    let calculatePart1 (lines : seq<string>) = 
-        let createMap map line =
+    let calculate part (lines : seq<string>) = 
+        let create (map, claims) line =
             let claim = parse line
-            let areas = seq {
-                for col = claim.LeftOffset to claim.LeftOffset + claim.Width - 1 do
-                    for row = claim.TopOffset to claim.TopOffset + claim.Height - 1 do
-                        yield (col, row)
-            }
             let addAreas map' area = 
                 let claims = match Map.tryFind area map' with
-                             | Some(claims') -> Set.add claim claims'
-                             | None -> Set.singleton claim
+                             | Some(claims') -> Set.add claim.Number claims'
+                             | None -> Set.singleton claim.Number
                 Map.add area claims map'
-            areas |> Seq.fold addAreas map
-        lines 
-        |> Seq.fold createMap Map.empty<(int * int), Set<Claim>>
-        |> Map.toSeq
-        |> Seq.filter (fun (_, claims) -> claims.Count > 1)
-        |> Seq.length
+            (claim.Areas |> Seq.fold addAreas map, claim :: claims)
+        let (areas, claims) = lines |> Seq.fold create (Map.empty<(int * int), Set<int>>, [])
+        let areasList = Map.toList areas
+        let hasNoOverlappingAreas claim = 
+            areasList 
+            |> Seq.where (fun (_, claims') -> Set.contains claim.Number claims')
+            |> Seq.forall (fun (_, claims') -> Set.count claims' = 1)
+        match part with
+        | 1 -> areasList 
+                |> List.filter (fun (_, claims) -> claims.Count > 1) 
+                |> List.length
+        | 2 -> (claims |> List.find hasNoOverlappingAreas).Number
+        | _ -> raise <| new ArgumentOutOfRangeException("part")
