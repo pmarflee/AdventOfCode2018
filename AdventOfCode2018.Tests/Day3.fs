@@ -4,7 +4,6 @@
         open Xunit
         open FsUnit.Xunit
         open AdventOfCode2018.Core.Day3
-        open Xunit.Sdk
 
         type Tests () =
 
