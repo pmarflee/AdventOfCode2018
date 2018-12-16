@@ -14,7 +14,7 @@
                                     GuardNumber = 10;
                                     Type = BeginsShift } :> obj |]; ]
 
-            static member Part1Data
+            static member PartData
                 with get() = [ [| [| "[1518-11-01 00:00] Guard #10 begins shift";
                                      "[1518-11-01 00:05] falls asleep";
                                      "[1518-11-01 00:25] wakes up";
@@ -32,7 +32,8 @@
                                      "[1518-11-05 00:03] Guard #99 begins shift";
                                      "[1518-11-05 00:45] falls asleep";
                                      "[1518-11-05 00:55] wakes up" |] :> obj;
-                                     240 :> obj |] ]
+                                     240 :> obj;
+                                     4455 :> obj |] ]
 
             [<Theory>]
             [<MemberData("ParserData")>]
@@ -40,7 +41,11 @@
                 parseEvent input { Guards = Map.empty; Event = None } |> should equal expected
 
             [<Theory>]
-            [<MemberData("Part1Data")>]
-            member _verify.``Find best guard/minute combination`` (input : string[], expected : int) =
-                calculatePart1 input |> should equal expected
+            [<MemberData("PartData")>]
+            member _verify.``Find best guard/minute combination`` (input : string[], expected : int, _) =
+                calculate 1 input |> should equal expected
 
+            [<Theory>]
+            [<MemberData("PartData")>]
+            member _verify.``Find guard/minute most frequently asleep`` (input : string[], _, expected : int) =
+                calculate 2 input |> should equal expected

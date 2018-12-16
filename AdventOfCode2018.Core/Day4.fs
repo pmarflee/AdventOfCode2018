@@ -17,12 +17,19 @@ module Day4 =
     type Guard = { Number : int; 
                    TotalMinutesAsleep : int ; 
                    MinutesWhenAsleep : Map<int, int> } with 
+
+                   member this.MinuteMostOftenAsleep =
+                       match this.MinutesWhenAsleep with
+                       | mins when mins.Count = 0 -> None
+                       | mins -> mins |> Map.toSeq |> Seq.maxBy snd |> Some
+
                    static member get event state =
                            match Map.tryFind event.GuardNumber state.Guards with
                            | Some(guard) -> guard
                            | None -> { Number = event.GuardNumber; 
                                        TotalMinutesAsleep = 0; 
                                        MinutesWhenAsleep = Map.empty }
+
                    static member update (current : Event) (state : State) guard =
                            match current.Type with
                            | BeginsShift | FallsAsleep -> guard
@@ -41,6 +48,7 @@ module Day4 =
                                 } 
                                 let minutesWhenAsleep = 
                                     Seq.fold recordMinutesWhenAsleep guard.MinutesWhenAsleep minutes
+
                                 { guard with 
                                         TotalMinutesAsleep = guard.TotalMinutesAsleep + totalMinutesAsleep;
                                         MinutesWhenAsleep = minutesWhenAsleep }
@@ -62,19 +70,38 @@ module Day4 =
                 (WakesUp, state.Event.Value.GuardNumber)
             else
                 failwith "Invalid state"
+
         { Date = date; GuardNumber = guard; Type = eventType }
     
-    let calculatePart1 input =
+    let calculate part input =
+
         Array.sortInPlace input
+
         let folder state line =
             let event = parseEvent line state
             let guard = Guard.get event state |> Guard.update event state
             let guards = Map.add event.GuardNumber guard state.Guards
+
             { Guards = guards; Event = Some(event) }
 
         let guards = (Array.fold folder { Guards = Map.empty; Event = None } input).Guards
-        let guard = guards |> Map.toSeq |> Seq.maxBy (fun (_, g) -> g.TotalMinutesAsleep) |> snd
-        let minute = guard.MinutesWhenAsleep |> Map.toSeq |> Seq.maxBy snd |> fst
 
-        guard.Number * minute
+        match part with
+        | 1 ->
+            let guard = guards 
+                        |> Map.toSeq 
+                        |> Seq.maxBy (fun (_, g) -> g.TotalMinutesAsleep) 
+                        |> snd
 
+            guard.Number * fst guard.MinuteMostOftenAsleep.Value
+
+        | 2 -> 
+            let (number, mins) = guards 
+                                   |> Map.toSeq 
+                                   |> Seq.map (fun (_, g) -> (g.Number, g.MinuteMostOftenAsleep))
+                                   |> Seq.where (fun (_, mins) -> mins.IsSome)
+                                   |> Seq.maxBy (fun (_, mins) -> snd mins.Value)
+
+            number * fst mins.Value
+
+        | _ -> raise <| new ArgumentOutOfRangeException("part")
