@@ -10,7 +10,12 @@ let main _ =
     let read path = File.ReadAllText path
     let readAllLines path = File.ReadAllLines path
 
-    let run title input func = printfn "%s %O" title (func input)
+    let run title input func = 
+        let stopWatch = System.Diagnostics.Stopwatch.StartNew()
+        let result = func input
+        let elapsed = stopWatch.ElapsedMilliseconds
+
+        printfn "%s %O (%ims)" title result elapsed
 
     run "Day 1 Part 1:" (readAllLines "Day1.txt") (Day1.calculatePart1)
     run "Day 1 Part 2:" (readAllLines "Day1.txt") (Day1.calculatePart2)
@@ -20,6 +25,7 @@ let main _ =
     run "Day 3 Part 2:" (readAllLines "Day3.txt") (Day3.calculate 2)
     run "Day 4 Part 1:" (readAllLines "Day4.txt") (Day4.calculate 1)
     run "Day 4 Part 2:" (readAllLines "Day4.txt") (Day4.calculate 2)
+    run "Day 5 Part 1:" (read "Day5.txt") (Day5.calculate 1)
 
     printfn ""
     printfn "Finished"
