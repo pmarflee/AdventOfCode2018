@@ -21,3 +21,8 @@ let ``Should react`` first second expected =
 [<InlineData("dabAcCaCBAcCcaDA", 10)>]
 let ``Calculate Part 1 Result`` input expected =
     Day5.calculate 1 input |> should equal expected 
+
+[<Theory>]
+[<InlineData("dabAcCaCBAcCcaDA", 4)>]
+let ``Calculate Part 2 Result`` input expected =
+    Day5.calculate 2 input |> should equal expected

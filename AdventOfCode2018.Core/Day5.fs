@@ -6,7 +6,9 @@ module Day5 =
     let internal willReact char1 char2 =
         Char.IsUpper char1 <> Char.IsUpper char2 && Char.ToUpper char1 = Char.ToUpper char2
 
-    let calculate part input =
+    let calculate part (input : string) =
+
+        let inputList = Seq.toList input
 
         let rec calculate' result remaining =
             match remaining with
@@ -22,4 +24,17 @@ module Day5 =
                     calculate' (first :: result) (second :: tail)
             | first :: [] -> calculate' (first :: result) []
 
-        input |> Seq.toList |> calculate' [] |> List.length
+        let removeChars charToRemove = 
+            let charToRemoveUpper = Char.ToUpper charToRemove
+            List.where (fun c -> c <> charToRemove && c <> charToRemoveUpper) inputList
+
+        match part with
+        | 1 -> inputList |> calculate' [] |> List.length
+        | 2 -> 
+            inputList 
+            |> List.map Char.ToLower 
+            |> List.distinct
+            |> List.map (removeChars >> calculate' [])
+            |> List.map List.length
+            |> List.minBy id
+        | _ -> raise <| new ArgumentOutOfRangeException("part")
