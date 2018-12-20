@@ -33,13 +33,12 @@ module Day7 =
        let steps = Array.fold createSteps Map.empty input
 
        let lettersWithNoDependents =
-           let noDependents key _ =
-                not <| Map.exists (fun _ step -> List.contains key step.Dependents) steps
            steps
-           |> Map.filter noDependents
+           |> Map.filter (fun key _ ->
+                not <| Map.exists (fun _ step -> List.contains key step.Dependents) steps)
            |> Map.toSeq
            |> Seq.map fst
-           |> Seq.toList
+           |> Set.ofSeq
 
        let orderGenerator (remaining, (completed : Set<char>)) = 
            if Set.isEmpty remaining then None
@@ -58,6 +57,6 @@ module Day7 =
 
                Some(letter, (remaining', Set.add letter completed))
 
-       Seq.unfold orderGenerator (Set.ofList lettersWithNoDependents, Set.empty)
+       Seq.unfold orderGenerator (lettersWithNoDependents, Set.empty)
        |> Array.ofSeq 
        |> String
