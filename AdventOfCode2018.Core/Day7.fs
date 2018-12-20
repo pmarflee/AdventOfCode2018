@@ -4,7 +4,7 @@ module Day7 =
     open System
     open System.Text.RegularExpressions
 
-    type private Step = { Letter : char; Dependents : char list; DependsUpon : char list }
+    type private Step = { Letter : char; Dependents : Set<char>; DependsUpon : Set<char> }
 
     let private _lineRegex = new Regex("^Step\s([A-Z])\smust\sbe\sfinished\sbefore\sstep\s([A-Z])\scan\sbegin\.$")
 
@@ -16,13 +16,17 @@ module Day7 =
 
        let getStep letter dependent steps =
             match Map.tryFind letter steps with
-            | Some(step) -> { step with Dependents = dependent :: step.Dependents }
-            | None -> { Letter = letter; Dependents = [ dependent ]; DependsUpon = [] }
+            | Some(step) -> { step with Dependents = step.Dependents.Add dependent }
+            | None -> { Letter = letter; 
+                        Dependents = Set.singleton dependent; 
+                        DependsUpon = Set.empty }
 
        let getDependent dependent letter steps =
             match Map.tryFind dependent steps with
-            | Some(step) -> { step with DependsUpon = letter :: step.DependsUpon }
-            | None -> { Letter = dependent; Dependents = []; DependsUpon = [ letter ] }
+            | Some(step) -> { step with DependsUpon = step.DependsUpon.Add letter }
+            | None -> { Letter = dependent; 
+                        Dependents = Set.empty; 
+                        DependsUpon = Set.singleton letter }
 
        let createSteps steps line =
             let (letter, dependent) = parse line
@@ -35,7 +39,7 @@ module Day7 =
        let lettersWithNoDependents =
            steps
            |> Map.filter (fun key _ ->
-                not <| Map.exists (fun _ step -> List.contains key step.Dependents) steps)
+                not <| Map.exists (fun _ step -> Set.contains key step.Dependents) steps)
            |> Map.toSeq
            |> Seq.map fst
            |> Set.ofSeq
@@ -47,16 +51,14 @@ module Day7 =
                    remaining
                    |> Seq.where (fun l -> 
                                     let step' = Map.find l steps
-                                    step'.DependsUpon |> List.forall completed.Contains) 
+                                    step'.DependsUpon |> Set.forall completed.Contains) 
                    |> Set.ofSeq
                    |> Set.minElement
                let step = Map.find letter steps
                let remaining' = remaining 
                                 |> Set.remove letter 
-                                |> Set.union (Set.ofList step.Dependents)
+                                |> Set.union step.Dependents
 
                Some(letter, (remaining', Set.add letter completed))
 
-       Seq.unfold orderGenerator (lettersWithNoDependents, Set.empty)
-       |> Array.ofSeq 
-       |> String
+       Seq.unfold orderGenerator (lettersWithNoDependents, Set.empty) |> Array.ofSeq |> String
