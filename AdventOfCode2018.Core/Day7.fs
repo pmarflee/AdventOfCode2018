@@ -47,15 +47,12 @@ module Day7 =
            else
                let letter =
                    remaining
-                   |> Seq.where (fun l -> 
-                                    let step' = Map.find l steps
-                                    step'.DependsUpon |> Set.forall completed.Contains) 
+                   |> Seq.where 
+                       (fun l -> (Map.find l steps).DependsUpon |> Set.forall completed.Contains) 
                    |> Set.ofSeq
                    |> Set.minElement
                let step = Map.find letter steps
-               let remaining' = remaining 
-                                |> Set.remove letter 
-                                |> Set.union step.Dependents
+               let remaining' = remaining |> Set.remove letter |> Set.union step.Dependents
 
                Some(letter, (remaining', Set.add letter completed))
 
