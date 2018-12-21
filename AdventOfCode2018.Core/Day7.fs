@@ -86,13 +86,13 @@ module Day7 =
                      |> Map.ofList
         let score letter = Map.find letter scores
         let rec calculate state =
-            printfn "Time: %i" state.Time
+            // printfn "Time: %i" state.Time
             let workersCompleted = 
                 state.Workers
                 |> Seq.choose (fun (KeyValue (_, worker)) -> worker.TryGetCompleted state.Time)
                 |> Seq.toList
-            for (number, step) in workersCompleted do
-                printfn "Worker %i completed step %c" number step.Letter
+            (* for (number, step) in workersCompleted do
+                printfn "Worker %i completed step %c" number step.Letter *)
             let completed = workersCompleted 
                             |> List.map (fun (_, step) -> step.Letter)
                             |> Set.ofList
@@ -119,7 +119,7 @@ module Day7 =
                             let step = find steps (Set.minElement remaining')
                             let completionTime = state.Time + score step.Letter
                             let worker' = { worker with State = Busy(step, completionTime) }
-                            printfn "Allocating step %c to worker %i with completion time of %i" step.Letter worker.Number completionTime
+                            // printfn "Allocating step %c to worker %i with completion time of %i" step.Letter worker.Number completionTime
                             (Map.add i worker' workers', Set.remove step.Letter remaining')
                         | _ -> (workers', remaining')
 
