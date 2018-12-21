@@ -15,10 +15,17 @@
                                      "Step B must be finished before step E can begin.";
                                      "Step D must be finished before step E can begin.";
                                      "Step F must be finished before step E can begin." |] :> obj;
-                                     "CABDFE" :> obj |]; ]
+                                     "CABDFE" :> obj;
+                                     15 :> obj; |] ]
 
             [<Theory>]
             [<MemberData("PartData")>]
-            member _verify.``Calculate correct order of steps`` (input : string[], expected : string) =
+            member _verify.``Calculate correct order of steps`` (input : string[], expected : string, _) =
                 calculatePart1 input |> should equal expected
+
+            [<Theory>]
+            [<MemberData("PartData")>]
+            member _verify.``Calculate time required to complete all steps`` 
+                (input : string[], _, expected : int) =
+                calculatePart2 2 0 input |> should equal expected
 
