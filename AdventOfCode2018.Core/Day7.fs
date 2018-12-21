@@ -38,10 +38,8 @@ module Day7 =
 
        let lettersWithNoDependents =
            steps
-           |> Map.filter (fun key _ ->
-                not <| Map.exists (fun _ step -> Set.contains key step.Dependents) steps)
-           |> Map.toSeq
-           |> Seq.map fst
+           |> Seq.where (fun kvp -> kvp.Value.DependsUpon.IsEmpty)
+           |> Seq.map (fun kvp -> kvp.Key)
            |> Set.ofSeq
 
        let orderGenerator (remaining, (completed : Set<char>)) = 
