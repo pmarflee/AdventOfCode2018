@@ -42,18 +42,19 @@ module Day7 =
            |> Seq.map (fun kvp -> kvp.Key)
            |> Set.ofSeq
 
+       let find letter = Map.find letter steps
+
        let orderGenerator (remaining, (completed : Set<char>)) = 
            if Set.isEmpty remaining then None
            else
-               let letter =
+               let step =
                    remaining
-                   |> Seq.where 
-                       (fun l -> (Map.find l steps).DependsUpon |> Set.forall completed.Contains) 
-                   |> Set.ofSeq
-                   |> Set.minElement
-               let step = Map.find letter steps
-               let remaining' = remaining |> Set.remove letter |> Set.union step.Dependents
+                   |> Seq.map find
+                   |> Seq.where (fun step -> step.DependsUpon |> Set.forall completed.Contains) 
+                   |> Seq.sortBy (fun step -> step.Letter)
+                   |> Seq.head
+               let remaining' = remaining |> Set.remove step.Letter |> Set.union step.Dependents
 
-               Some(letter, (remaining', Set.add letter completed))
+               Some(step.Letter, (remaining', Set.add step.Letter completed))
 
        Seq.unfold orderGenerator (lettersWithNoDependents, Set.empty) |> Array.ofSeq |> String
