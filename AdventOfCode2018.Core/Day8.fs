@@ -19,13 +19,13 @@ module Day8 =
                 match input with
                 | qc :: qm :: tl -> qc, qm, tl
                 | _ -> 0, 0, []
-            let input', sum' = 
+            let input, sum = 
                 match quantityOfChildNodes with 
                 | 0 -> remaining, sum
                 | q -> calculate remaining sum 1 q
-            let metadata, remaining' = take quantityOfMetadata 0 [] input'
-            let sum'' = sum' + List.sum metadata
-            if depth = maxDepth then remaining', sum''
-            else calculate remaining' sum'' (depth + 1) maxDepth
+            let metadata, remaining = take quantityOfMetadata 0 [] input
+            let sum = sum + List.sum metadata
+            if depth = maxDepth then remaining, sum
+            else calculate remaining sum (depth + 1) maxDepth
 
         calculate input 0 0 1 |> snd
