@@ -21,5 +21,5 @@ let ``Should parse input correctly`` input expectedPlayers expectedMarbles =
 [<InlineData(21, 6111, 54718)>]
 [<InlineData(30, 5807, 37305)>]
 let ``Should calculate highest score correctly`` players marbles expected =
-    Day9.calculatePart1 (players, marbles) |> should equal expected
+    Day9.calculate (players, marbles) |> should equal (expected |> int |> bigint)
 

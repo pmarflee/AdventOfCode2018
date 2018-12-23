@@ -34,7 +34,8 @@ let main _ =
     run "Day 7 Part 2:" (readAllLines "Day7.txt") (Day7.calculatePart2 5 60)
     run "Day 8 Part 1:" (read "Day8.txt") (Day8.parse >> Day8.calculatePart1)
     printfn "Day 8 Part 2: TBC"
-    run "Day 9 Part 1:" "435 players; last marble is worth 71184 points" (Day9.parse >> Day9.calculatePart1)
+    run "Day 9 Part 1:" "435 players; last marble is worth 71184 points" (Day9.parse >> Day9.calculate)
+    run "Day 9 Part 2:" "435 players; last marble is worth 7118400 points" (Day9.parse >> Day9.calculate)
 
     printfn ""
     printfn "Finished"
